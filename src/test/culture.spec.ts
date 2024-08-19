@@ -16,11 +16,10 @@ describe("CultureService", () => {
 
   it("should return a list of cultures", async () => {
     const mockCultures: Culture[] = [
-      { id: "1", name: "Soybean" },
-      { id: "2", name: "Corn" },
+      { id: "1", name: "Café" },
+      { id: "2", name: "Cana de Açucar" },
     ];
 
-    // Mock the repository's find method
     jest
       .spyOn(cultureService["cultureRepository"], "find")
       .mockResolvedValue(mockCultures);
