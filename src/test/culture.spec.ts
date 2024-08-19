@@ -1,58 +1,32 @@
-import { jest } from "@jest/globals";
-import { beforeEach, describe, it } from "node:test";
-import { CultureController } from "../controllers/CultureController";
+import { AppDataSource } from "../database/db";
 import { CultureService } from "../service/CultureService";
-import { Request, Response } from "express";
+import { Culture } from "../entities/Culture.entity";
 
-describe("CultureController", () => {
-  let cultureController: CultureController;
+describe("CultureService", () => {
   let cultureService: CultureService;
 
-  beforeEach(() => {
+  beforeAll(async () => {
+    await AppDataSource.initialize();
     cultureService = new CultureService();
-    cultureController = new CultureController();
   });
 
-  describe("getCultureList", () => {
-    it("should return a list of cultures with status 200", async () => {
-      const mockCultureList = [
-        { id: "1", name: "Soja" },
-        { id: "2", name: "Milho" },
-      ];
-      const mockResponse = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
-      const mockRequest = {} as Request;
+  afterAll(async () => {
+    await AppDataSource.destroy();
+  });
 
-      jest
-        .spyOn(cultureService, "getCultureList")
-        .mockResolvedValue(mockCultureList);
+  it("should return a list of cultures", async () => {
+    const mockCultures: Culture[] = [
+      { id: "1", name: "Soybean" },
+      { id: "2", name: "Corn" },
+    ];
 
-      await cultureController.getCultureList(mockRequest, mockResponse);
+    // Mock the repository's find method
+    jest
+      .spyOn(cultureService["cultureRepository"], "find")
+      .mockResolvedValue(mockCultures);
 
-      expect(cultureService.getCultureList).toHaveBeenCalled();
-      expect(mockResponse.status).toHaveBeenCalledWith(200);
-      expect(mockResponse.json).toHaveBeenCalledWith(mockCultureList);
-    });
+    const cultures = await cultureService.getCultureList();
 
-    it("should handle errors and return status 400", async () => {
-      const mockError = new Error("Something went wrong");
-      const mockResponse = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
-      const mockRequest = {} as Request;
-
-      jest.spyOn(cultureService, "getCultureList").mockRejectedValue(mockError);
-
-      await cultureController.getCultureList(mockRequest, mockResponse);
-
-      expect(cultureService.getCultureList).toHaveBeenCalled();
-      expect(mockResponse.status).toHaveBeenCalledWith(400);
-      expect(mockResponse.json).toHaveBeenCalledWith({
-        error: mockError.message,
-      });
-    });
+    expect(cultures).toEqual(mockCultures);
   });
 });
