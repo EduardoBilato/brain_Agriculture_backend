@@ -29,7 +29,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.version.image_name }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/brain-agriculture-backend
           tags: latest
           build_args: ${{ steps.generate_build_args.outputs.build_args }}
           
