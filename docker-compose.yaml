@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pg1234
+      POSTGRES_DB: brain_agriculture
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost -d brain_agriculture"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  node:
+    build: .
+    container_name: backend
+    command: npm start
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: pg1234
+      DATABASE_NAME: brain_agriculture
+      DATABASE_PORT: 5432
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/opt/app/
+    depends_on:
+      postgres:
+        condition: service_healthy

@@ -1,0 +1,36 @@
+# Rural Producer API - backend
+
+Para executar o backend, navegue para a pasta raiz do projeto e execute o comando:
+```dash
+docker-compose up -d
+```
+<p>
+Caso deseje acessar a documentação da api, após inicializar a aplicação, clique neste [link](http://localhost:3001/api-docs/)
+
+
+# Diagrama de Relacionamento
+
+![imagem](./assets/db-diagram.png)
+
+## Entidades:
+
+*Produtor (Producer)*: Representa um produtor rural.
+*Fazenda (Farm)*: Representa uma fazenda pertencente a um produtor.
+*Cultura (Culture)*: Representa uma cultura agrícola cultivada em uma fazenda.
+
+# Descrição dos Relacionamentos
+
+## Produtor-Fazenda:
+
+Um produtor pode possuir várias fazendas.<br>
+Uma fazenda está associada a apenas um produtor.<br>
+
+## Fazenda-Cultura:
+
+Uma fazenda pode ter diversas culturas.<br>
+Uma cultura pode ser cultivada em diversas fazendas.<br>
+
+## Observações
+
+A relação muitos-para-muitos entre Fazenda e Cultura é implementada utilizando uma tabela de junção, que armazena os IDs das fazendas e das culturas que estão relacionadas.<br>
+Este modelo de relacionamento permite representar a estrutura de produtores, suas fazendas e as culturas que cultivam de forma eficiente e flexível<br>

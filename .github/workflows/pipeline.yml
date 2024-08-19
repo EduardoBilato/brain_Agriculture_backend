@@ -1,0 +1,35 @@
+name: 'CI protocolos'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate build arguments
+        id: generate_build_args
+        run: |
+          echo "::set-output name=build_args::DATABASE_HOST=${{ secrets.DATABASE_HOST }} \
+                                             ,DATABASE_USER=${{ secrets.DATABASE_USER }} \
+                                             ,DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
+                                             ,DATABASE_NAME=${{ secrets.DATABASE_NAME }} \ 
+                                             ,DATABASE_PORT=${{ secrets.DATABASE_PORT }} \
+                                             ,PUBLIC_FRONT_URL=${{ secrets.PUBLIC_FRONT_URL }}"
+
+      - name: Build and push image to dockerhub
+        id: docker_build
+        uses: docker/build-push-action@v1.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: eduardobilato/${{ matrix.version.image_name }}
+          tags: latest
+          build_args: ${{ steps.generate_build_args.outputs.build_args }}
+          
